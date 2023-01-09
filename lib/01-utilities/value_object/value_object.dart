@@ -4,6 +4,20 @@ import 'package:flutter/cupertino.dart';
 
 import '../value_failure/value_failure.dart';
 
+///A [ValueObject] is an object that can hold two states,
+///a good state, with its dedicated value, or a wrong state, 
+///and its dedicated ValueFailure object.
+///
+///It comes with standard functions to manipulate the object: 
+///
+///failureOrUnit returns a Failure in case of failure, and a 
+///unit in case of success. 
+///
+///isValidated will check the status of the object, will return 
+///false if it’s a failure, and true otherwise.
+///
+///getOrCrash will return the desired value if good, otherwise 
+///it will simply crash. Because fuck it.
 @immutable
 abstract class ValueObject<T> extends Equatable {
   const ValueObject();
@@ -17,7 +31,7 @@ abstract class ValueObject<T> extends Equatable {
 
   dynamic get getOrCrash => value.fold(
         (l) => throw const UnexpectedValueError(),
-        (r) => null,
+        id,
       );
 
   @override
@@ -27,6 +41,12 @@ abstract class ValueObject<T> extends Equatable {
   String toString() => 'Value(value: $value)';
 }
 
+///A [UniqueId] is a validated string that is unique.
+///
+///The fromUniqueString method basically uses a String
+///(must be from a safe source!) and creates a UniqueId 
+///from it.
+/// 
 class UniqueId extends ValueObject<String> {
   @override
   final Either<ValueFailure<String>, String> value;
@@ -39,6 +59,9 @@ class UniqueId extends ValueObject<String> {
   }
 }
 
+///A [MaxLenghtString] is a validated String that has a 
+///maximum number of character allowed.
+///
 class MaxLenghtString extends ValueObject<String> {
   @override 
   final Either<ValueFailure<String>, String> value;
