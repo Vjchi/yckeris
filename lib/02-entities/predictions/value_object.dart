@@ -24,3 +24,4 @@ class PredictionDescription extends ValueObject<String> {
   factory PredictionDescription.fromString(String input) => PredictionDescription._(right(input));
 }
 
+
