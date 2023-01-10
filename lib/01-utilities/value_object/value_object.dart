@@ -1,22 +1,23 @@
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:uuid/uuid.dart';
 
 import '../value_failure/value_failure.dart';
 
 ///A [ValueObject] is an object that can hold two states,
-///a good state, with its dedicated value, or a wrong state, 
+///a good state, with its dedicated value, or a wrong state,
 ///and its dedicated ValueFailure object.
 ///
-///It comes with standard functions to manipulate the object: 
+///It comes with standard functions to manipulate the object:
 ///
-///failureOrUnit returns a Failure in case of failure, and a 
-///unit in case of success. 
+///failureOrUnit returns a Failure in case of failure, and a
+///unit in case of success.
 ///
-///isValidated will check the status of the object, will return 
+///isValidated will check the status of the object, will return
 ///false if it’s a failure, and true otherwise.
 ///
-///getOrCrash will return the desired value if good, otherwise 
+///getOrCrash will return the desired value if good, otherwise
 ///it will simply crash. Because fuck it.
 @immutable
 abstract class ValueObject<T> extends Equatable {
@@ -44,28 +45,21 @@ abstract class ValueObject<T> extends Equatable {
 ///A [UniqueId] is a validated string that is unique.
 ///
 ///The fromUniqueString method basically uses a String
-///(must be from a safe source!) and creates a UniqueId 
+///(must be from a safe source!) and creates a UniqueId
 ///from it.
-/// 
+///
 class UniqueId extends ValueObject<String> {
   @override
   final Either<ValueFailure<String>, String> value;
   const UniqueId._(this.value);
 
+  ///The first factory method creates it using the UUID package
+  factory UniqueId() => UniqueId._(right(const Uuid().v1()));
+
+  ///The fromUniqueString method generate it from a given string
   factory UniqueId.fromUniqueString(String uniqueId) {
     return UniqueId._(
       right(uniqueId),
     );
   }
-}
-
-///A [MaxLenghtString] is a validated String that has a 
-///maximum number of character allowed.
-///
-class MaxLenghtString extends ValueObject<String> {
-  @override 
-  final Either<ValueFailure<String>, String> value;
-  final int maxLenght;
-
-  const MaxLenghtString._(this.value, this.maxLenght);
 }
